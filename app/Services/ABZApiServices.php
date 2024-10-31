@@ -10,7 +10,7 @@ class ABZApiServices
 {
     public function getToken(): bool
     {
-        $response = $this->prepareRequest()->get('{+domain}/api/token');
+        $response = $this->prepareRequest()->get('{+domain}/api/v1/token');
         if ($response->successful()) {
             $result = $response->object();
             session()->put('abz_token', $result->token);
@@ -18,37 +18,10 @@ class ABZApiServices
         }
         return false;
     }
-
-    public function registerUser(array $data): object
-    {
-        $session = Session::get('abz_token');
-        $path = $data['photo']->store('uploads', 'public');
-        $data['photo'] = config('app.url') . '/storage/' . $path;
-        $response = $this->prepareRequest()
-            ->withHeaders([
-                'token' => $session
-            ])
-            ->acceptJson()
-            ->post('{+domain}/api/users', $data);
-        $filePath = storage_path('app/public/' . $path); // Full path to the saved file
-        unlink($filePath);
-
-        if ($response->successful()) {
-            return $response->object();
-        }
-
-        $errorData = $response->object(); // Get error details as array
-        return literal(
-            success: false,
-            message: $errorData->message ?? 'An error occurred',
-            errors: $errorData->data ?? []
-        );
-    }
-
     public function getUsers(int $count, int $page)
     {
         $response = $this->prepareRequest()
-            ->get('{+domain}/api/users', [
+            ->get('{+domain}/api/v1/users', [
                 'count' => $count,
                 'page' => $page,
             ]);
@@ -60,7 +33,7 @@ class ABZApiServices
     public function showUser(int $id)
     {
         $response = $this->prepareRequest()
-            ->get('{+domain}/api/users/' . $id);
+            ->get('{+domain}/api/v1/users/' . $id);
         if ($response->successful()) {
             return $response->object();
         }
@@ -74,7 +47,7 @@ class ABZApiServices
     public function getPositions()
     {
         $response = $this->prepareRequest()
-            ->get('{+domain}/api/positions');
+            ->get('{+domain}/api/v1/positions');
         if ($response->successful()) {
             return $response->object()->positions;
         }

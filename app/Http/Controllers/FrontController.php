@@ -34,11 +34,4 @@ class FrontController extends Controller
 
         return view('_partials.users-list-tr', compact('users'));
     }
-
-    public function getToken()
-    {
-        $this->abzApiService->getToken();
-
-        return redirect()->route('main.page');
-    }
 }

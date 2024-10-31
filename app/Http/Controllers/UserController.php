@@ -27,24 +27,6 @@ class UserController extends Controller
         ));
 	}
 
-    public function store(Request $request)
-    {
-        $result = $this->abzApiService->registerUser($request->all());
-
-        if ($result->success === false) {
-            if (isset($result->errors)) {
-                Session::flash('errors', $result->errors);
-            }
-            Session::flash('error_message', $result->message);
-            Session::flashInput($request->input());
-
-            return redirect()->back();
-        }
-        Session::forget('abz_token');
-
-        return redirect()->route('main.page');
-    }
-
     public function show($id)
     {
         $result = $this->abzApiService->showUser($id);
